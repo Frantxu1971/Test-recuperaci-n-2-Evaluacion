@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Circuitos Eléctricos — 1º CFGB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root,[data-theme="light"]{
+  --color-bg:#f7f6f2;--color-surface:#f9f8f5;--color-surface-2:#fbfbf9;
+  --color-surface-offset:#f3f0ec;--color-border:#d4d1ca;--color-divider:#dcd9d5;
+  --color-text:#28251d;--color-text-muted:#7a7974;--color-text-faint:#bab9b4;
+  --color-primary:#01696f;--color-primary-hover:#0c4e54;--color-primary-highlight:#cedcd8;
+  --color-success:#437a22;--color-success-hover:#2e5c10;--color-success-highlight:#d4dfcc;
+  --color-error:#a12c7b;--color-error-hover:#7d1e5e;--color-error-highlight:#e0ced7;
+  --color-warning:#964219;--color-warning-highlight:#ddcfc6;
+  --color-orange:#da7101;--color-orange-highlight:#e7d7c4;
+  --shadow-sm:0 1px 2px oklch(0.2 0.01 80/0.06);
+  --shadow-md:0 4px 12px oklch(0.2 0.01 80/0.08);
+  --shadow-lg:0 12px 32px oklch(0.2 0.01 80/0.12);
+  --radius-sm:0.375rem;--radius-md:0.5rem;--radius-lg:0.75rem;--radius-xl:1rem;--radius-full:9999px;
+  --space-1:0.25rem;--space-2:0.5rem;--space-3:0.75rem;--space-4:1rem;--space-5:1.25rem;
+  --space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;
+  --font-body:'Inter',sans-serif;--font-display:'Instrument Serif',Georgia,serif;
+  --text-xs:clamp(0.75rem,0.7rem + 0.25vw,0.875rem);
+  --text-sm:clamp(0.875rem,0.8rem + 0.35vw,1rem);
+  --text-base:clamp(1rem,0.95rem + 0.25vw,1.125rem);
+  --text-lg:clamp(1.125rem,1rem + 0.75vw,1.5rem);
+  --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+  --transition-interactive:180ms cubic-bezier(0.16,1,0.3,1);
+}
+[data-theme="dark"]{
+  --color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#201f1d;
+  --color-surface-offset:#1d1c1a;--color-border:#393836;--color-divider:#262523;
+  --color-text:#cdccca;--color-text-muted:#797876;--color-text-faint:#5a5957;
+  --color-primary:#4f98a3;--color-primary-hover:#227f8b;--color-primary-highlight:#313b3b;
+  --color-success:#6daa45;--color-success-hover:#4d8f25;--color-success-highlight:#3a4435;
+  --color-error:#d163a7;--color-error-hover:#b9478f;--color-error-highlight:#4c3d46;
+  --color-warning:#bb653b;--color-warning-highlight:#564942;
+  --color-orange:#fdab43;--color-orange-highlight:#564b3e;
+  --shadow-sm:0 1px 2px oklch(0 0 0/0.2);--shadow-md:0 4px 12px oklch(0 0 0/0.3);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme]){
+  --color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#201f1d;
+  --color-surface-offset:#1d1c1a;--color-border:#393836;--color-divider:#262523;
+  --color-text:#cdccca;--color-text-muted:#797876;--color-text-faint:#5a5957;
+  --color-primary:#4f98a3;--color-primary-hover:#227f8b;
+}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth;}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg);transition:background var(--transition-interactive),color var(--transition-interactive);}
+img{display:block;max-width:100%;}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit;}
+input,select{font:inherit;color:inherit;}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm);}
+
+.app{max-width:760px;margin-inline:auto;padding:var(--space-6) var(--space-4);}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-8);}
+.logo{display:flex;align-items:center;gap:var(--space-3);}
+.logo-text{font-family:var(--font-display);font-size:var(--text-lg);color:var(--color-text);}
+.logo-sub{font-size:var(--text-xs);color:var(--color-text-muted);letter-spacing:0.05em;text-transform:uppercase;}
+.theme-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-full);color:var(--color-text-muted);transition:background var(--transition-interactive),color var(--transition-interactive);}
+.theme-btn:hover{background:var(--color-surface-offset);color:var(--color-text);}
+
+.card{background:var(--color-surface);border:1px solid oklch(from var(--color-text) l c h/0.1);border-radius:var(--radius-xl);padding:var(--space-8);box-shadow:var(--shadow-md);}
+.card+.card{margin-top:var(--space-6);}
+
+.form-title{font-family:var(--font-display);font-size:var(--text-xl);margin-bottom:var(--space-2);}
+.form-subtitle{font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-8);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);}
+@media(max-width:500px){.form-row{grid-template-columns:1fr;}}
+.form-group{display:flex;flex-direction:column;gap:var(--space-2);}
+.form-group.full{grid-column:1/-1;}
+label{font-size:var(--text-sm);font-weight:500;color:var(--color-text-muted);}
+input[type="text"]{padding:var(--space-3) var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-bg);font-size:var(--text-base);transition:border-color var(--transition-interactive),box-shadow var(--transition-interactive);}
+input[type="text"]:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px oklch(from var(--color-primary) l c h/0.15);outline:none;}
+input.error{border-color:var(--color-error);}
+.error-msg{font-size:var(--text-xs);color:var(--color-error);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-3) var(--space-6);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:600;transition:background var(--transition-interactive),box-shadow var(--transition-interactive);}
+.btn-primary{background:var(--color-primary);color:#fff;}
+.btn-primary:hover{background:var(--color-primary-hover);box-shadow:var(--shadow-sm);}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+
+.timer-bar{display:flex;align-items:center;justify-content:space-between;background:var(--color-surface);border:1px solid oklch(from var(--color-text) l c h/0.1);border-radius:var(--radius-lg);padding:var(--space-3) var(--space-5);margin-bottom:var(--space-6);box-shadow:var(--shadow-sm);}
+.timer-label{font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em;}
+.timer-display{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;color:var(--color-primary);transition:color var(--transition-interactive);}
+.timer-display.warn{color:var(--color-orange);}
+.timer-display.danger{color:var(--color-error);}
+.progress-track{flex:1;margin:0 var(--space-4);height:6px;background:var(--color-surface-offset);border-radius:var(--radius-full);overflow:hidden;}
+.progress-fill{height:100%;background:var(--color-primary);border-radius:var(--radius-full);transition:width 1s linear,background 1s;}
+.progress-fill.warn{background:var(--color-orange);}
+.progress-fill.danger{background:var(--color-error);}
+
+.quiz-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-6);}
+.quiz-title{font-family:var(--font-display);font-size:var(--text-lg);}
+.quiz-student{font-size:var(--text-sm);color:var(--color-text-muted);}
+
+.block-label{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-xs);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;padding:var(--space-1) var(--space-3);border-radius:var(--radius-full);margin-bottom:var(--space-5);}
+.block-1{background:var(--color-primary-highlight);color:var(--color-primary);}
+.block-2{background:var(--color-orange-highlight);color:var(--color-orange);}
+.block-3{background:var(--color-success-highlight);color:var(--color-success);}
+
+.question-item{margin-bottom:var(--space-6);}
+.question-num{font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:var(--space-2);}
+.question-text{font-size:var(--text-base);font-weight:500;margin-bottom:var(--space-4);line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:var(--space-2);}
+.option{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-md);cursor:pointer;transition:background var(--transition-interactive),border-color var(--transition-interactive);background:var(--color-bg);}
+.option:hover{background:var(--color-surface-offset);border-color:var(--color-primary);}
+.option.selected{background:var(--color-primary-highlight);border-color:var(--color-primary);}
+.option input[type="radio"]{accent-color:var(--color-primary);width:16px;height:16px;flex-shrink:0;}
+.option-text{font-size:var(--text-sm);}
+.option.correct{background:var(--color-success-highlight);border-color:var(--color-success);}
+.option.wrong{background:var(--color-error-highlight);border-color:var(--color-error);}
+.option.correct .option-text,.option.correct .option-badge{color:var(--color-success);font-weight:600;}
+.option.wrong .option-text,.option.wrong .option-badge{color:var(--color-error);}
+.option-badge{font-size:var(--text-xs);font-weight:700;margin-left:auto;}
+.divider{height:1px;background:var(--color-divider);margin:var(--space-6) 0;}
+
+.results-title{font-family:var(--font-display);font-size:var(--text-xl);margin-bottom:var(--space-2);}
+.results-student{font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-8);}
+.score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:var(--space-4);margin-bottom:var(--space-8);}
+.score-card{background:var(--color-surface-offset);border-radius:var(--radius-lg);padding:var(--space-5);text-align:center;}
+.score-card .val{font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;margin-bottom:var(--space-1);}
+.score-card .lbl{font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em;}
+.score-card.green .val{color:var(--color-success);}
+.score-card.red .val{color:var(--color-error);}
+.score-card.blue .val{color:var(--color-primary);}
+.score-card.orange .val{color:var(--color-orange);}
+.score-card.gold .val{color:#c8860a;}
+.nota-box{background:var(--color-primary);color:#fff;border-radius:var(--radius-xl);padding:var(--space-8);text-align:center;margin-bottom:var(--space-8);}
+.nota-box .nota-val{font-family:var(--font-display);font-size:clamp(3rem,10vw,5rem);font-weight:700;line-height:1;}
+.nota-box .nota-lbl{font-size:var(--text-sm);opacity:0.85;margin-top:var(--space-2);}
+.nota-box .nota-max{font-size:var(--text-xs);opacity:0.7;margin-top:var(--space-1);}
+
+.bloque-resumen{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--space-3);margin-bottom:var(--space-8);}
+.bloque-card{background:var(--color-surface-offset);border-radius:var(--radius-lg);padding:var(--space-4);border-left:3px solid;}
+.bloque-card-title{font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-text-muted);margin-bottom:var(--space-2);}
+.bloque-card-stats{display:flex;gap:var(--space-4);font-size:var(--text-sm);}
+.bloque-card-stats span{flex:1;}
+
+.screen{display:none;}
+.screen.active{display:block;}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="header">
+    <div class="logo">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-label="Logo Circuitos">
+        <rect width="32" height="32" rx="8" fill="var(--color-primary)"/>
+        <circle cx="16" cy="16" r="5" stroke="#fff" stroke-width="2" fill="none"/>
+        <path d="M16 4v4M16 24v4M4 16h4M24 16h4" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        <path d="M8 11h4v2H8z" fill="#fff" rx="1"/>
+        <path d="M20 11h4v2h-4z" fill="#fff" rx="1"/>
+      </svg>
+      <div>
+        <div class="logo-text">Circuitos Eléctricos</div>
+        <div class="logo-sub">1º CFGB · Tinkercad</div>
+      </div>
+    </div>
+    <button class="theme-btn" data-theme-toggle aria-label="Cambiar tema">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+  </header>
+
+  <!-- PANTALLA 1: NOMBRE -->
+  <div id="screen-name" class="screen active">
+    <div class="card">
+      <h1 class="form-title">Identificación del alumno</h1>
+      <p class="form-subtitle">Introduce tu nombre y apellidos para comenzar el test. El test tiene 25 preguntas y una duración máxima de 40 minutos.</p>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="inp-nombre">Nombre</label>
+          <input type="text" id="inp-nombre" placeholder="María" autocomplete="off">
+          <span class="error-msg" id="err-nombre" style="display:none;">Introduce tu nombre</span>
+        </div>
+        <div class="form-group">
+          <label for="inp-ap1">Primer apellido</label>
+          <input type="text" id="inp-ap1" placeholder="García" autocomplete="off">
+          <span class="error-msg" id="err-ap1" style="display:none;">Introduce el primer apellido</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="inp-ap2">Segundo apellido</label>
+          <input type="text" id="inp-ap2" placeholder="López" autocomplete="off">
+          <span class="error-msg" id="err-ap2" style="display:none;">Introduce el segundo apellido</span>
+        </div>
+      </div>
+      <br>
+      <div style="background:var(--color-surface-offset);border-radius:var(--radius-lg);padding:var(--space-4);margin-bottom:var(--space-6);font-size:var(--text-sm);color:var(--color-text-muted);">
+        <strong style="color:var(--color-text);">Instrucciones:</strong><br>
+        · 25 preguntas · 40 minutos · Opción múltiple<br>
+        · Respuesta correcta: <strong style="color:var(--color-success);">+1 punto</strong> · Respuesta incorrecta: <strong style="color:var(--color-error);">−⅓ punto</strong> · En blanco: 0 puntos<br>
+        · La nota máxima sobre 10 es 10. La nota real es sobre 6 (máximo de aciertos × 1 pt ÷ 25 × 6).
+      </div>
+      <button class="btn btn-primary" id="btn-start" style="width:100%;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Comenzar el test
+      </button>
+    </div>
+  </div>
+
+  <!-- PANTALLA 2: TEST -->
+  <div id="screen-quiz" class="screen">
+    <div class="timer-bar">
+      <div>
+        <div class="timer-label">Tiempo restante</div>
+        <div class="timer-display" id="timer-display">40:00</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="timer-progress" style="width:100%"></div>
+      </div>
+      <div style="text-align:right;">
+        <div class="timer-label">Contestadas</div>
+        <div style="font-family:var(--font-display);font-size:var(--text-lg);color:var(--color-text);" id="answered-count">0/25</div>
+      </div>
+    </div>
+
+    <div class="quiz-header">
+      <div>
+        <div class="quiz-title">Test de Circuitos Eléctricos</div>
+        <div class="quiz-student" id="quiz-student-name"></div>
+      </div>
+    </div>
+    <div id="quiz-body"></div>
+
+    <div style="text-align:center;margin-top:var(--space-8);">
+      <button class="btn btn-primary" id="btn-submit" style="min-width:200px;">
+        Entregar y ver resultados
+      </button>
+      <div style="font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-3);">Las preguntas sin contestar se contarán como en blanco (0 puntos)</div>
+    </div>
+  </div>
+
+  <!-- PANTALLA 3: INFORME -->
+  <div id="screen-results" class="screen">
+    <div class="card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);margin-bottom:var(--space-6);">
+        <div>
+          <h2 class="results-title">Informe de corrección</h2>
+          <div class="results-student" id="res-student-name"></div>
+        </div>
+        <div style="font-size:var(--text-xs);color:var(--color-text-muted);text-align:right;" id="res-fecha"></div>
+      </div>
+
+      <div class="nota-box" id="nota-box">
+        <div class="nota-val" id="nota-sobre10">—</div>
+        <div class="nota-lbl">Nota sobre 10</div>
+        <div class="nota-max" id="nota-sobre6-display"></div>
+      </div>
+
+      <div class="score-grid">
+        <div class="score-card green"><div class="val" id="res-aciertos">—</div><div class="lbl">Aciertos</div></div>
+        <div class="score-card red"><div class="val" id="res-fallos">—</div><div class="lbl">Fallos</div></div>
+        <div class="score-card orange"><div class="val" id="res-blanco">—</div><div class="lbl">En blanco</div></div>
+        <div class="score-card blue"><div class="val" id="res-puntos">—</div><div class="lbl">Puntos</div></div>
+        <div class="score-card gold"><div class="val" id="res-sobre6">—</div><div class="lbl">Nota / 6</div></div>
+      </div>
+
+      <div style="background:var(--color-surface-offset);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:var(--space-6);">
+        <strong style="color:var(--color-text);">Criterio de corrección:</strong>
+        Acierto <span style="color:var(--color-success);font-weight:600;">+1 pt</span> ·
+        Fallo <span style="color:var(--color-error);font-weight:600;">−⅓ pt</span> ·
+        En blanco <span style="font-weight:600;">0 pt</span>
+      </div>
+
+      <div id="bloque-resumen" class="bloque-resumen"></div>
+
+      <div class="divider"></div>
+
+      <h3 style="font-size:var(--text-lg);margin:var(--space-6) 0 var(--space-5);">Revisión de respuestas</h3>
+      <div id="review-body"></div>
+
+      <div style="margin-top:var(--space-10);padding-top:var(--space-6);border-top:2px solid var(--color-divider);text-align:center;">
+        <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);">
+          Revisa tus respuestas y descarga el informe oficial cuando estés listo
+        </p>
+        <button class="btn btn-primary" id="btn-pdf-bottom" style="min-width:260px;padding:var(--space-4) var(--space-8);font-size:var(--text-base);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Imprimir informe en PDF
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// BANCO DE PREGUNTAS
+const BANCO = {
+  t1: [
+    {q:"¿Cuál es la fórmula correcta de la Ley de Ohm para calcular la tensión?",opts:["V = I / R","V = R / I","V = I + R","V = I × R"],c:3},
+    {q:"En un circuito con batería de 9V y resistencia de 100 Ω, ¿cuánta intensidad circula?",opts:["0,009 A","9 A","900 A","0,09 A"],c:3},
+    {q:"Si la intensidad es 20 mA y la resistencia es 470 Ω, ¿cuál es la tensión?",opts:["23,5 V","0,094 V","47 V","9,4 V"],c:3},
+    {q:"¿Para qué se coloca una resistencia en serie con un LED?",opts:["Para que el LED brille más","Para aumentar la tensión","Para cambiar el color","Para limitar la intensidad y proteger el LED"],c:3},
+    {q:"¿Qué instrumento se coloca en serie para medir la intensidad?",opts:["Voltímetro","Óhmetro","Potenciómetro","Amperímetro"],c:3},
+    {q:"¿Cómo se coloca el voltímetro para medir tensión en un componente?",opts:["En serie","Entre la batería y componente","En el polo negativo","En paralelo"],c:3},
+    {q:"¿Qué ocurre a la intensidad si aumenta la resistencia con tensión constante?",opts:["Aumenta","No cambia","También aumenta la tensión","Disminuye"],c:3},
+    {q:"¿Cuál de estos LEDs necesita mayor tensión directa en Tinkercad?",opts:["Rojo (1,8 V)","Naranja (2,0 V)","Verde (2,2 V)","Azul (3,2 V)"],c:3},
+    {q:"¿Si conectas un LED con polaridad invertida, qué ocurre?",opts:["Luce más","Cambia de color","La batería se descarga más","No se enciende"],c:3},
+    {q:"¿Qué unidad se usa para medir la resistencia eléctrica?",opts:["Voltio (V)","Amperio (A)","Vatio (W)","Ohmio (Ω)"],c:3},
+    {q:"En serie con tres resistencias, ¿cómo es la intensidad en cada una?",opts:["Distinta","Mayor en la grande","Menor en la pequeña","La misma en todas"],c:3},
+    {q:"En serie 9V + resistencias + LED, ¿cuánto suman las tensiones?",opts:["Más de 9 V","Menos de 9 V","Depende de componentes","Exactamente 9 V"],c:3},
+    {q:"Con R1=100 Ω, R2=220 Ω, R3=470 Ω en serie, ¿cuál tiene mayor caída?",opts:["R1","R2","Las tres igual","R3"],c:3},
+    {q:"En serie, si desconectas un componente, ¿qué ocurre?",opts:["Siguen funcionando","Siguen con menos tensión","Solo ese se apaga","Todo el circuito se apaga"],c:3},
+    {q:"¿Resistencia total de R1=100 + R2=220 + R3=470 Ω en serie?",opts:["156 Ω","395 Ω","47000 Ω","790 Ω"],c:3},
+    {q:"Con pulsador abierto en serie, ¿qué marca el amperímetro?",opts:["El mismo","La mitad","Depende resistencias","0 A porque está abierto"],c:3},
+    {q:"¿Diferencia entre pulsador e interruptor?",opts:["El pulsador es grande","Solo en alterna","No hay diferencia","Pulsador: mientras presionas; interruptor: queda fijo"],c:3},
+    {q:"¿Tensión que cae en R1=100 Ω si circulan 10 mA?",opts:["0,1 V","10 V","100 V","1 V"],c:3},
+    {q:"¿Brillo del LED al añadir más resistencia en serie?",opts:["Más brillo","No cambia","Se apaga","Menos brillo por menos intensidad"],c:3},
+    {q:"Batería 9V, LED rojo 1,8V, ¿qué resistencia para 20 mA?",opts:["270 Ω","460 Ω","790 Ω","360 Ω"],c:3},
+  ],
+  t2: [
+    {q:"En paralelo, ¿cómo es la tensión en cada rama?",opts:["Distinta","Mayor con más resistencia","Menor con menos componentes","La misma en todas"],c:3},
+    {q:"En paralelo, ¿cómo se obtiene la intensidad total?",opts:["Divide tensión entre ramas","Multiplica intensidades","Resta rama pequeña","Suma intensidades de todas"],c:3},
+    {q:"Con R1=100 Ω común antes de ramas, si cambia a 470 Ω, ¿LEDs?",opts:["Solo rama 1 se apaga","Lucen más","No cambia nada","Lucen menos"],c:3},
+    {q:"Con tres ramas con interruptor, si abres rama 2, ¿qué ocurre?",opts:["Se apagan todos","Aumenta intensidad en 1 y 3","Se apaga la batería","Solo LED rama 2 se apaga"],c:3},
+    {q:"Resistencia equivalente en paralelo vs resistencia más pequeña?",opts:["Mayor","Igual","Suma de todas","Menor"],c:3},
+    {q:"Ramas R2=220 Ω, R3=330 Ω, R4=470 Ω, ¿cuál mayor intensidad?",opts:["R4=470 Ω","R3=330 Ω","Todas iguales","R2=220 Ω"],c:3},
+    {q:"¿Instalación real con paralelo?",opts:["Pilas en serie de mando","Cableado motor eléctrico","Circuito arranque coche","Luces de las casas"],c:3},
+    {q:"¿Qué mide amperímetro A_total en batería + R1?",opts:["Solo rama 1","Cada LED por separado","Tensión total","Suma intensidades todas ramas"],c:3},
+    {q:"Si A1=15 mA, A2=12 mA, A3=8 mA, ¿A_total?",opts:["15 mA","12 mA","120 mA","35 mA"],c:3},
+    {q:"¿Por qué LED rojo y azul tienen tensión distinta en voltímetros?",opts:["Rojo más resistencia en rama","Amperímetro afecta tensión","Batería da más a unos","Distinto color = distinta tensión directa"],c:3},
+    {q:"¿Ventaja paralelo con interruptores vs serie?",opts:["Aumenta tensión","Reduce consumo","Protege de sobretensión","Encender/apagar independiente cada LED"],c:3},
+    {q:"En paralelo con solo rama 3 cerrada, ¿A1 y A2?",opts:["Mismo que A3","Mitad de A3","Negativo","0 A esas ramas abiertas"],c:3},
+    {q:"¿Cambia tensión LED rojo al cerrar rama verde en paralelo?",opts:["Aumenta","Disminuye","Depende R1","No cambia igual en paralelo"],c:3},
+    {q:"¿Afirmación correcta sobre circuito paralelo?",opts:["Intensidad cada rama siempre igual","Tensión aumenta más ramas","Resistencia total aumenta ramas","Más ramas = mayor intensidad total"],c:3},
+    {q:"¿Por qué R1 común afecta todos LEDs al cambiar?",opts:["R1 en paralelo ramas","R1 dentro rama 1","LEDs comparten resistencia","R1 en serie alimentación antes distribución"],c:3},
+    {q:"Paralelo R=330 Ω, tensión rama 7 V, ¿intensidad?",opts:["0,21 mA","330 mA","2,31 A","21,2 mA"],c:3},
+    {q:"Añadir rama paralelo, ¿resistencia total?",opts:["Aumenta","Igual","Duplica","Disminuye"],c:3},
+    {q:"Voltímetro V1 sobre R1 común, ¿mide?",opts:["Tensión batería","Tensión todas ramas","Tensión nodo hacia ramas","Caída R1"],c:3},
+    {q:"Cerrar interruptor abierto en rama paralelo, ¿A_total?",opts:["Disminuye","No cambia","Se divide ramas","Aumenta más corriente"],c:3},
+    {q:"¿Instrumento detecta primero rama adicional paralelo?",opts:["Voltímetro LED rama","Voltímetro R1","Amperímetro otra rama","Amperímetro A_total"],c:3},
+  ],
+  t3: [
+    {q:"¿Qué es un potenciómetro?",opts:["Resistencia fija conocida","Componente almacena carga","Interruptor electrónico","Resistencia variable ajustable cursor"],c:3},
+    {q:"POT_R=100%, POT_G=0%, POT_B=0%, ¿color RGB?",opts:["Blanco","Amarillo","Magenta","Rojo"],c:3},
+    {q:"POT_R=100%, POT_G=100%, POT_B=0%, ¿color?",opts:["Cian","Magenta","Blanco","Amarillo"],c:3},
+    {q:"Todos potenciómetros 100%, ¿color RGB?",opts:["Rojo","Amarillo","Cian","Blanco"],c:3},
+    {q:"POT_R=0%, POT_G=100%, POT_B=100%, ¿color?",opts:["Amarillo","Magenta","Verde","Cian"],c:3},
+    {q:"¿Para qué R1=100 Ω en cátodo LED RGB?",opts:["Aumentar brillo","Cambiar color","Medir tensión batería","Proteger LED limitando intensidad"],c:3},
+    {q:"¿Amperímetro cátodo común LED RGB mide?",opts:["Solo rojo","Solo azul","Tensión batería","Intensidad total canales activos"],c:3},
+    {q:"Si giras POT_R 100% a 50%, ¿canal rojo?",opts:["Se apaga","Cambia verde","Más brillo","Menos brillo"],c:3},
+    {q:"¿Mezcla luz RGB vs mezclar pinturas?",opts:["Pinturas brillan más","LEDs solo tres colores","Pinturas sin electricidad","Luz RGB blanco; pinturas color oscuro"],c:3},
+    {q:"Tres canales 100%, ¿por qué intensidad > un solo?",opts:["Batería más voltaje","R1 disminuye","Potenciómetros suma serie","Más canales = más corriente cátodo"],c:3},
+    {q:"POT_R=100%, POT_G=0%, POT_B=100%, ¿color?",opts:["Amarillo","Cian","Blanco","Magenta"],c:3},
+    {q:"POT_B a 0%, ¿canal azul LED?",opts:["Tensión máxima","Mitad tensión","Tensión invertida","Poca/ninguna, no enciende"],c:3},
+    {q:"¿Aparatos hogar usan potenciómetro?",opts:["Interruptor luz","Enchufe pared","Fusible cuadro","Volumen música/brillo lámpara"],c:3},
+    {q:"¿Ventaja potenciómetros paralelo vs batería?",opts:["Todos controlan juntos","Resistencia aumenta","LED más tensión","Cada canal independiente"],c:3},
+    {q:"Eliminar R1 cátodo RGB, ¿riesgo?",opts:["Cambia color","Luce menos","Potenciómetros se estropean","LED quemarse sin límite intensidad"],c:3},
+    {q:"POT_R=0%, POT_G=0%, POT_B=100%, ¿color?",opts:["Verde","Rojo","Blanco","Azul"],c:3},
+    {q:"Todos canales 100%, ¿instrumento mayor cambio?",opts:["Voltímetros potenciómetros","Voltímetro POT_B","Voltímetro POT_R","Amperímetro cátodo"],c:3},
+    {q:"Reducir todos potenciómetros 50%, ¿brillo?",opts:["No cambia","Solo cambia color","Aumenta","Disminuye todos canales"],c:3},
+    {q:"¿Cursor (terminal central) potenciómetro?",opts:["Conecta tierra","Alimenta LED","Mide intensidad","Divide resistencia salida variable"],c:3},
+    {q:"POT_G 100% demás 0%, V1 y V3 (POT_R y POT_B)?",opts:["Mismo V2","Mitad V2","Negativo","0 V canales inactivos"],c:3},
+  ]
+};
+
+// ESTADO
+let state = {
+  nombre:'', ap1:'', ap2:'', fullName:'',
+  questions:[], answers:[], submitted:false,
+  timerInterval:null, secondsLeft:40*60,
+  aciertos:0, fallos:0, blanco:0, puntos:0, sobre10:0, sobre6:0
+};
+
+// UTILIDADES
+function toTitleCase(s){ return s.trim().replace(/\b\w/g,c=>c.toUpperCase()); }
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+function pick(arr,n){ return shuffle(arr).slice(0,n); }
+function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+function fmt2(n){ return n<10?'0'+n:n; }
+
+// GENERAR PREGUNTAS: 7 T1 + 8 T2 + 10 T3
+function buildQuestions(){
+  return [
+    ...pick(BANCO.t1,7).map(q=>({...q,bloque:1})),
+    ...pick(BANCO.t2,8).map(q=>({...q,bloque:2})),
+    ...pick(BANCO.t3,10).map(q=>({...q,bloque:3}))
+  ];
+}
+
+// RENDER QUIZ
+const BLOQUE_LABELS={1:'Tarea 1 — Serie y Ley de Ohm',2:'Tarea 2 — Circuito en Paralelo',3:'Tarea 3 — LED RGB y Potenciómetros'};
+const BLOQUE_CLASS={1:'block-1',2:'block-2',3:'block-3'};
+
+function renderQuiz(){
+  const body=document.getElementById('quiz-body');
+  let html='',lastBloque=0;
+  state.questions.forEach((q,i)=>{
+    if(q.bloque!==lastBloque){
+      if(lastBloque!==0) html+='<div class="divider"></div>';
+      html+=`<div class="block-label ${BLOQUE_CLASS[q.bloque]}">${BLOQUE_LABELS[q.bloque]}</div>`;
+      lastBloque=q.bloque;
+    }
+    html+=`<div class="question-item" id="q-item-${i}"><div class="question-num">Pregunta ${i+1} de 25</div><div class="question-text">${q.q}</div><div class="options" id="opts-${i}">`;
+    q.opts.forEach((opt,j)=>{
+      html+=`<label class="option" id="opt-${i}-${j}"><input type="radio" name="q${i}" value="${j}" onchange="onAnswer(${i},${j})"><span class="option-text">${opt}</span></label>`;
+    });
+    html+=`</div></div>`;
+  });
+  body.innerHTML=html;
+  state.answers=new Array(25).fill(-1);
+  updateAnsweredCount();
+}
+
+function onAnswer(qi,val){
+  state.answers[qi]=val;
+  state.questions[qi].opts.forEach((_,j)=>{ document.getElementById(`opt-${qi}-${j}`).classList.toggle('selected',j===val); });
+  updateAnsweredCount();
+}
+
+function updateAnsweredCount(){
+  const cnt=state.answers.filter(a=>a!==-1).length;
+  document.getElementById('answered-count').textContent=`${cnt}/25`;
+}
+
+// TEMPORIZADOR
+function startTimer(){
+  const TOTAL=40*60;
+  state.secondsLeft=TOTAL;
+  const disp=document.getElementById('timer-display');
+  const prog=document.getElementById('timer-progress');
+  state.timerInterval=setInterval(()=>{
+    state.secondsLeft--;
+    const m=Math.floor(state.secondsLeft/60),s=state.secondsLeft%60;
+    disp.textContent=`${fmt2(m)}:${fmt2(s)}`;
+    const pct=(state.secondsLeft/TOTAL)*100;
+    prog.style.width=pct+'%';
+    const cls=state.secondsLeft<=300?'danger':state.secondsLeft<=600?'warn':'';
+    disp.className='timer-display'+(cls?' '+cls:'');
+    prog.className='progress-fill'+(cls?' '+cls:'');
+    if(state.secondsLeft<=0){ clearInterval(state.timerInterval); submitQuiz(true); }
+  },1000);
+}
+
+// INICIO
+document.getElementById('btn-start').addEventListener('click',()=>{
+  const n=document.getElementById('inp-nombre').value;
+  const a1=document.getElementById('inp-ap1').value;
+  const a2=document.getElementById('inp-ap2').value;
+  let ok=true;
+  [[n,'nombre'],[a1,'ap1'],[a2,'ap2']].forEach(([v,id])=>{
+    if(!v.trim()){ document.getElementById('err-'+id).style.display='block'; document.getElementById('inp-'+id).classList.add('error'); ok=false; }
+    else { document.getElementById('err-'+id).style.display='none'; document.getElementById('inp-'+id).classList.remove('error'); }
+  });
+  if(!ok) return;
+  state.nombre=toTitleCase(n); state.ap1=toTitleCase(a1); state.ap2=toTitleCase(a2);
+  state.fullName=`${state.ap1} ${state.ap2}, ${state.nombre}`;
+  document.getElementById('quiz-student-name').textContent=state.fullName;
+  state.questions=buildQuestions();
+  renderQuiz();
+  showScreen('screen-quiz');
+  startTimer();
+});
+
+// ENTREGAR
+document.getElementById('btn-submit').addEventListener('click',()=>{
+  const blank=state.answers.filter(a=>a===-1).length;
+  const msg=blank>0?`Tienes ${blank} pregunta${blank>1?'s':''} sin contestar. ¿Entregar igualmente?`:'¿Deseas entregar el test?';
+  if(confirm(msg)) submitQuiz(false);
+});
+
+// SUBMIT
+function submitQuiz(timeUp){
+  if(state.submitted) return;
+  state.submitted=true;
+  clearInterval(state.timerInterval);
+
+  let ac=0,fa=0,bl=0;
+  state.questions.forEach((q,i)=>{
+    const ans=state.answers[i];
+    if(ans===-1) bl++;
+    else if(ans===q.c) ac++;
+    else fa++;
+  });
+  const puntos=ac-fa*(1/3);
+  const sobre10=Math.max(0,(puntos/25)*10);
+  const sobre6=Math.max(0,(puntos/25)*6);
+  state.aciertos=ac; state.fallos=fa; state.blanco=bl;
+  state.puntos=puntos; state.sobre10=sobre10; state.sobre6=sobre6;
+
+  const fecha=new Date().toLocaleDateString('es-ES',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('res-student-name').textContent=state.fullName;
+  document.getElementById('res-fecha').innerHTML=`Fecha: <strong>${fecha}</strong>`;
+  document.getElementById('nota-sobre10').textContent=sobre10.toFixed(2);
+  document.getElementById('nota-sobre6-display').textContent=`Nota real sobre 6: ${sobre6.toFixed(2)}`;
+  document.getElementById('res-aciertos').textContent=ac;
+  document.getElementById('res-fallos').textContent=fa;
+  document.getElementById('res-blanco').textContent=bl;
+  document.getElementById('res-puntos').textContent=puntos.toFixed(2);
+  document.getElementById('res-sobre6').textContent=sobre6.toFixed(2);
+
+  const nb=document.getElementById('nota-box');
+  if(sobre10>=5) nb.style.background='var(--color-success)';
+  else if(sobre10>=3) nb.style.background='var(--color-warning)';
+  else nb.style.background='var(--color-error)';
+
+  const blq={1:{ac:0,fa:0,bl:0,total:7,name:'Tarea 1',color:'var(--color-primary)'},2:{ac:0,fa:0,bl:0,total:8,name:'Tarea 2',color:'var(--color-orange)'},3:{ac:0,fa:0,bl:0,total:10,name:'Tarea 3',color:'var(--color-success)'}};
+  state.questions.forEach((q,i)=>{
+    const a=state.answers[i];
+    if(a===-1) blq[q.bloque].bl++;
+    else if(a===q.c) blq[q.bloque].ac++;
+    else blq[q.bloque].fa++;
+  });
+  document.getElementById('bloque-resumen').innerHTML=[1,2,3].map(b=>`<div class="bloque-card" style="border-left-color:${blq[b].color};"><div class="bloque-card-title">${blq[b].name} (${blq[b].total})</div><div class="bloque-card-stats"><span style="color:var(--color-success);">✓ ${blq[b].ac}</span><span style="color:var(--color-error);">✗ ${blq[b].fa}</span><span style="color:var(--color-text-muted);">— ${blq[b].bl}</span></div></div>`).join('');
+
+  renderReview();
+  showScreen('screen-results');
+  if(timeUp) alert('⏱ Tiempo agotado. El cuestionario se ha cerrado automáticamente.');
+}
+
+// REVISIÓN
+function renderReview(){
+  let html='',lastBloque=0;
+  state.questions.forEach((q,i)=>{
+    if(q.bloque!==lastBloque){
+      if(lastBloque!==0) html+='<div class="divider"></div>';
+      html+=`<div class="block-label ${BLOQUE_CLASS[q.bloque]}">${BLOQUE_LABELS[q.bloque]}</div>`;
+      lastBloque=q.bloque;
+    }
+    const ans=state.answers[i];
+    const isCorrect=ans===q.c,isBlank=ans===-1;
+    const statusLabel=isBlank?'<span style="color:var(--color-text-muted)">◌ En blanco</span>':isCorrect?'<span style="color:var(--color-success)">✓ Correcta</span>':'<span style="color:var(--color-error)">✗ Incorrecta</span>';
+    html+=`<div class="question-item"><div class="question-num">Pregunta ${i+1} · ${statusLabel}</div><div class="question-text">${q.q}</div><div class="options">`;
+    q.opts.forEach((opt,j)=>{
+      const isRight=j===q.c,wasChosen=j===ans;
+      let cls='option',badge='';
+      if(isRight){ cls+=' correct'; badge='✓'; }
+      else if(wasChosen&&!isRight){ cls+=' wrong'; badge='✗'; }
+      html+=`<div class="${cls}" style="cursor:default;"><span class="option-text">${opt}</span>${badge?`<span class="option-badge">${badge}</span>`:''}</div>`;
+    });
+    html+=`</div></div>`;
+  });
+  document.getElementById('review-body').innerHTML=html;
+}
+
+// PDF
+function generatePDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,M=18;
+  let y=M;
+
+  doc.setFillColor(1,105,111);
+  doc.rect(0,0,W,45,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(17);
+  doc.text('Informe de Corrección — Circuitos Eléctricos',W/2,16,{align:'center'});
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text('Módulo: Equipos Eléctricos y Electrónicos · 1º CFGB',W/2,26,{align:'center'});
+  doc.text(new Date().toLocaleDateString('es-ES',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}),W/2,34,{align:'center'});
+  y=54;
+
+  doc.setTextColor(40,37,29);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(12);
+  doc.text('Alumno/a: '+state.fullName,M,y);
+  y+=10;
+
+  doc.setDrawColor(212,209,202);
+  doc.setLineWidth(0.4);
+  doc.line(M,y,W-M,y);
+  y+=7;
+
+  const nc=state.sobre10>=5?[67,122,34]:state.sobre10>=3?[150,66,25]:[161,44,123];
+  doc.setFillColor(...nc);
+  doc.roundedRect(M,y,W-2*M,24,4,4,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(22);
+  doc.text(`${state.sobre10.toFixed(2)} / 10`,W/2,y+10,{align:'center'});
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(9);
+  doc.text(`Nota real sobre 6: ${state.sobre6.toFixed(2)}`,W/2,y+18,{align:'center'});
+  y+=32;
+
+  doc.setTextColor(40,37,29);
+  const stats=[['Aciertos',state.aciertos,[67,122,34]],['Fallos',state.fallos,[161,44,123]],['En blanco',state.blanco,[218,113,1]],['Puntos',state.puntos.toFixed(2),[1,105,111]],['Nota / 6',state.sobre6.toFixed(2),[200,134,10]]];
+  const cw=(W-2*M)/3;
+  stats.forEach((st,i)=>{
+    const col=i%3,row=Math.floor(i/3);
+    const cx=M+col*cw,cy=y+row*18;
+    doc.setFillColor(243,240,236);
+    doc.roundedRect(cx,cy,cw-2,14,3,3,'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(13);
+    doc.setTextColor(...st[2]);
+    doc.text(String(st[1]),cx+cw/2-1,cy+6,{align:'center'});
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(122,121,116);
+    doc.text(st[0],cx+cw/2-1,cy+12,{align:'center'});
+  });
+  y+=42;
+
+  doc.setDrawColor(212,209,202);
+  doc.line(M,y,W-M,y);
+  y+=5;
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(9);
+  doc.setTextColor(40,37,29);
+  doc.text('Criterio: +1 correcta, −⅓ incorrecta, 0 en blanco',M,y);
+  y+=12;
+
+  const blq={1:{ac:0,fa:0,bl:0,total:7,name:'Tarea 1'},2:{ac:0,fa:0,bl:0,total:8,name:'Tarea 2'},3:{ac:0,fa:0,bl:0,total:10,name:'Tarea 3'}};
+  state.questions.forEach((q,i)=>{
+    const a=state.answers[i];
+    if(a===-1) blq[q.bloque].bl++;
+    else if(a===q.c) blq[q.bloque].ac++;
+    else blq[q.bloque].fa++;
+  });
+  [1,2,3].forEach(b=>{
+    const bq=blq[b];
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(9);
+    doc.text(`${bq.name} (${bq.total} preg.):`,M,y);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(122,121,116);
+    doc.text(`✓ ${bq.ac}  ✗ ${bq.fa}  — ${bq.bl}`,M+55,y);
+    y+=6;
+  });
+  y+=6;
+
+  doc.setDrawColor(212,209,202);
+  doc.line(M,y,W-M,y);
+  y+=6;
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(10);
+  doc.setTextColor(40,37,29);
+  doc.text('Revisión de respuestas',M,y);
+  y+=7;
+
+  state.questions.forEach((q,i)=>{
+    if(y>270){ doc.addPage(); y=M; }
+    const ans=state.answers[i];
+    const isCorrect=ans===q.c,isBlank=ans===-1;
+    const statusText=isBlank?'EN BLANCO':isCorrect?'CORRECTA':'INCORRECTA';
+    const statusColor=isBlank?[122,121,116]:isCorrect?[67,122,34]:[161,44,123];
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(40,37,29);
+    const qText=doc.splitTextToSize(`${i+1}. ${q.q}`,W-2*M-25);
+    doc.text(qText,M,y);
+    doc.setTextColor(...statusColor);
+    doc.text(statusText,W-M,y,{align:'right'});
+    y+=qText.length*3.5+1;
+    if(!isBlank&&!isCorrect){ doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(161,44,123); doc.text(`Tu respuesta: ${q.opts[ans]}`,M+3,y); y+=3.5; }
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(7);
+    doc.setTextColor(67,122,34);
+    doc.text(`Respuesta correcta: ${q.opts[q.c]}`,M+3,y);
+    y+=5;
+  });
+
+  const pages=doc.getNumberOfPages();
+  for(let p=1;p<=pages;p++){
+    doc.setPage(p);
+    doc.setFont('helvetica','italic');
+    doc.setFontSize(7);
+    doc.setTextColor(186,185,180);
+    doc.text(`${state.fullName} · Pág. ${p}/${pages}`,W/2,290,{align:'center'});
+  }
+
+  const safe=state.fullName.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ, ]/g,'_');
+  doc.save(`Informe_Test_${safe}.pdf`);
+}
+
+document.getElementById('btn-pdf-bottom').addEventListener('click',generatePDF);
+
+// THEME
+(function(){
+  const t=document.querySelector('[data-theme-toggle]'),r=document.documentElement;
+  let d=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  r.setAttribute('data-theme',d);
+  t&&t.addEventListener('click',()=>{
+    d=d==='dark'?'light':'dark';
+    r.setAttribute('data-theme',d);
+    t.innerHTML=d==='dark'?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>':'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  });
+})();
+</script>
+</body>
+</html>
